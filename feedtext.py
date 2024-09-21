@@ -12,6 +12,12 @@ import PyPDF2
 VERSION = "0.1"
 GITHUB_URL = "https://github.com/arnauddsj/feedtext"
 
+if getattr(sys, 'frozen', False):
+    # If the application is run as a bundle, use the bundle's directory as the base path
+    application_path = sys._MEIPASS
+else:
+    application_path = os.path.dirname(os.path.abspath(__file__))
+    
 class ClearableLineEdit(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)

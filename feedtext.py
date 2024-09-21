@@ -1,15 +1,16 @@
 import sys
 import os
 import csv
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QLabel, QFileDialog, QTextEdit, QMessageBox
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLineEdit, QLabel, QFileDialog, QTextEdit
+from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtGui import QDesktopServices
 import fnmatch
 import openpyxl
 from docx import Document
 import PyPDF2
 
 VERSION = "0.1"
+GITHUB_URL = "https://github.com/arnauddsj/feedtext"
 
 class ClearableLineEdit(QWidget):
     def __init__(self, parent=None):
@@ -50,11 +51,6 @@ class FileProcessorApp(QWidget):
 
     def initUI(self):
         layout = QVBoxLayout()
-
-        # Version label
-        self.version_label = QLabel(f"Version: {VERSION}")
-        self.version_label.setAlignment(Qt.AlignRight)
-        layout.addWidget(self.version_label)
 
         # Input folder selection
         input_layout = QHBoxLayout()
@@ -100,8 +96,28 @@ class FileProcessorApp(QWidget):
         self.log_output.setReadOnly(True)
         layout.addWidget(self.log_output)
 
+        # Add a new layout for the bottom links
+        bottom_layout = QHBoxLayout()
+
+        # Website link (bottom left)
+        self.website_link = QPushButton("feedtext.ai")
+        self.website_link.clicked.connect(self.open_website)
+        bottom_layout.addWidget(self.website_link)
+
+        # Spacer to push the version and GitHub link to the right
+        bottom_layout.addStretch()
+
+        # Version label and GitHub link (bottom right)
+        self.version_label = QLabel(f"Version: {VERSION}")
+        self.github_link = QPushButton("GitHub")
+        self.github_link.clicked.connect(self.open_github)
+        bottom_layout.addWidget(self.version_label)
+        bottom_layout.addWidget(self.github_link)
+
+        layout.addLayout(bottom_layout)
+
         self.setLayout(layout)
-        self.setWindowTitle('File Processor')
+        self.setWindowTitle('Feed Text')
         self.setGeometry(300, 300, 500, 400)
 
     def select_input_folder(self):
@@ -239,6 +255,12 @@ class FileProcessorApp(QWidget):
                 return b'\0' in file.read(chunk_size)
         except Exception:
             return True  # If we can't read the file, assume it's binary for safety
+
+    def open_github(self):
+        QDesktopServices.openUrl(QUrl(GITHUB_URL))
+
+    def open_website(self):
+        QDesktopServices.openUrl(QUrl("https://feedtext.ai"))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

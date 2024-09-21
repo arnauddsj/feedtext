@@ -65,6 +65,10 @@ To create a standalone .app file on macOS:
    ```
    pyinstaller --windowed feedtext.py
    ```
+   or if you have problems with the above command, you can try this:
+   ```
+   pyinstaller feedtext.spec
+   ```
 
 3. Once the process completes, you'll find your .app file in the `dist` directory.
 
